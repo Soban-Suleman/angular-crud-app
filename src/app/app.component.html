@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 mt-4">
+      <h1 class="text-center">Todo List</h1>
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+          <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">Todo</th>
+            <th class="text-center">Due</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let todo of todos"
+            [ngStyle]="{
+              color: todo.completed ? 'green' : 'red'
+            }"
+          >
+            <td>{{ todo.id }}</td>
+            <td>{{ todo.todo }}</td>
+            <td>{{ todo.due }}</td>
+            <td>{{ todo.completed === true ? "completed" : "pending" }}</td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-info btn-sm mr-2"
+                (click)="showEditTodoForm(todo)"
+              >
+                Edit
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-danger btn-sm mr-2"
+                (click)="removeTodo(todo)"
+              >
+                Delete
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-success btn-sm"
+                (click)="markDoneTodo(todo)"
+                *ngIf="todo.completed === false"
+              >
+                Mark as Done
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-success" (click)="showAddTodoForm()">
+        Add New Todo
+      </button>
+
+      <div class="mt-4">
+        <form *ngIf="todoForm">
+          <h2>Add New Todo</h2>
+          <p>
+            Todo:
+            <input
+              type="text"
+              name="name"
+              [(ngModel)]="newTodo.todo"
+              required
+            />
+          </p>
+          <p>
+            Due:
+            <input type="date" name="due" [(ngModel)]="newTodo.due" required />
+          </p>
+          <p>
+            <button
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="saveTodo(newTodo)"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning"
+              (click)="cancelNewTodo()"
+            >
+              Cancel
+            </button>
+          </p>
+        </form>
+
+        <form *ngIf="editTodoForm">
+          <h2>Edit Todo Details</h2>
+          <p>
+            Todo:
+            <input type="text" name="todo" [(ngModel)]="editedTodo.todo" />
+          </p>
+          <p>
+            Due:
+            <input type="date" name="due" [(ngModel)]="editedTodo.due" />
+          </p>
+          <p>
+            <button
+              type="button"
+              class="btn btn-primary mr-2"
+              (click)="updateTodo()"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning"
+              (click)="cancelEdits()"
+            >
+              Cancel
+            </button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
