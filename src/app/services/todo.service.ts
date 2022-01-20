@@ -1,38 +1,50 @@
 import { Injectable } from "@angular/core";
 import { Todo } from "../models/todo";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+
+const baseURL: string = "http://localhost:3000/api";
 
 @Injectable({
   providedIn: "root",
 })
 export class TodoService {
-  private todos: Todo[] = [
-    {
-      id: 1,
-      todo: "Wakeup",
-      due: new Date().toLocaleDateString("en-US"),
-      completed: false,
-    },
-  ];
+  constructor(private http: HttpClient) {}
 
-  constructor() {}
-
-  getTodosFromData(): Todo[] {
-    return this.todos;
+  async getTodosFromData() {
+    let data = await fetch(`${baseURL}/todo`);
+    const { todos } = await data.json();
+    return todos;
   }
 
-  addTodo(todo: Todo) {
-    todo.id = this.todos.length + 1;
-    this.todos.push(todo);
+  async addTodo(todo: Todo) {
+    await fetch(`${baseURL}/todo/`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(todo),
+    });
   }
-  updateTodo(todo: Todo) {
-    const index = this.todos.findIndex((u) => todo.id === u.id);
-    this.todos[index] = todo;
+  async updateTodo(todo: Todo): Promise<any> {
+    await fetch(`${baseURL}/todo/update/${todo._id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify(todo),
+    });
   }
-  deleteTodo(todo: Todo) {
-    this.todos.splice(this.todos.indexOf(todo), 1);
+  async deleteTodo(todo: Todo) {
+    await fetch(`${baseURL}/todo/delete/${todo._id}`, { method: "DELETE" });
   }
-  markTodo(todo: Todo) {
-    const index = this.todos.findIndex((u) => todo.id === u.id);
-    this.todos[index].completed = true;
+  async markTodo(todo: Todo): Promise<any> {
+    await fetch(`${baseURL}/todo/update/${todo._id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify({ completed: true }),
+    });
   }
 }

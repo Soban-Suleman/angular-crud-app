@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { async } from "rxjs/internal/scheduler/async";
 import { Todo } from "./models/todo";
 import { TodoService } from "./services/todo.service";
 
@@ -18,10 +19,12 @@ export class AppComponent implements OnInit {
   constructor(private todoService: TodoService) {}
 
   ngOnInit() {
-    this.todos = this.getUsers();
+    setTimeout(async () => {
+      this.todos = await this.getUsers();
+    }, 100);
   }
 
-  getUsers(): Todo[] {
+  getUsers(): any {
     return this.todoService.getTodosFromData();
   }
 
@@ -46,7 +49,10 @@ export class AppComponent implements OnInit {
   saveTodo(todo: Todo) {
     if (this.isNewTodo) {
       // add a new todo
+
       this.todoService.addTodo({ ...todo, completed: false });
+      this.todoForm = false;
+      return this.ngOnInit();
     }
     this.todoForm = false;
   }
@@ -55,13 +61,17 @@ export class AppComponent implements OnInit {
     this.todoService.updateTodo(this.editedTodo);
     this.editTodoForm = false;
     this.editedTodo = {};
+    return this.ngOnInit();
   }
 
   removeTodo(todo: Todo) {
     this.todoService.deleteTodo(todo);
+    return this.ngOnInit();
   }
   markDoneTodo(todo: Todo) {
+    console.log(todo);
     this.todoService.markTodo(todo);
+    return this.ngOnInit();
   }
   cancelEdits() {
     this.editedTodo = {};
